@@ -3,12 +3,17 @@ export type AxisInfo = {
     coor: number
 }
 
+export type Line = {
+    color: string,
+    coor: number
+}
+
 export const drawAxis = (ctx: CanvasRenderingContext2D, data: AxisInfo[]) => {
     for (let datum of data)
         ctx.fillText(String(datum.val), 375, datum.coor)
 }
 
-export const drawGraph = (ctx: CanvasRenderingContext2D, data: number[], min: number, max: number, redline?: number) => {
+export const drawGraph = (ctx: CanvasRenderingContext2D, data: number[], min: number, max: number, additionalLine?: Line) => {
     ctx.clearRect(0, 0, 375, 300)
 
     const logStack = data.length
@@ -18,13 +23,13 @@ export const drawGraph = (ctx: CanvasRenderingContext2D, data: number[], min: nu
 
     data = data.map((val, idx, arr) => 300 - unit * (val - min))
     
-    if (redline) {
-        redline = 300 - unit * (redline - min)
+    if (additionalLine) {
+        additionalLine.coor = 300 - unit * (additionalLine.coor - min)
 
-        ctx.strokeStyle = '#FF0000'
+        ctx.strokeStyle = additionalLine.color
         ctx.beginPath()
-        ctx.moveTo(0, redline)
-        ctx.lineTo(375, redline)
+        ctx.moveTo(0, additionalLine.coor)
+        ctx.lineTo(360, additionalLine.coor)
         ctx.stroke()
     }
     

@@ -1,5 +1,5 @@
 import io from 'socket.io-client'
-import { drawAxis, drawGraph } from './drawer.ts'
+import { Line, drawAxis, drawGraph } from './drawer.ts'
 import {
     vAxisInfo,
     sAxisInfo,
@@ -35,7 +35,7 @@ socket.on('voltage', (data: number) => {
     vltLog.push(data)
     vltLog.shift()
     vView.innerText = String(data)
-    drawGraph(vCtx, vltLog, 0, 120, 30)
+    drawGraph(vCtx, vltLog, 80, 120, { color: '#FF0000', coor: 100 } as Line)
 })
 
 drawAxis(sCtx, sAxisInfo)
@@ -44,7 +44,7 @@ socket.on('speed', (data: number) => {
     spdLog.push(data)
     spdLog.shift()
     sView.innerText = String(data)
-    drawGraph(sCtx, spdLog, 0, 150, 80)
+    drawGraph(sCtx, spdLog, 0, 150, { color: '#FF0000', coor: 80 } as Line)
 })
 
 drawAxis(tCtx, tAxisInfo)
@@ -53,7 +53,7 @@ socket.on('temperature', (data: number) => {
     tmpLog.push(data)
     tmpLog.shift()
     tView.innerText = String(data)
-    drawGraph(tCtx, tmpLog, 30, 120, 100)
+    drawGraph(tCtx, tmpLog, 20, 120, { color: '#FF0000', coor: 80 } as Line)
 })
 
 drawAxis(cCtx, cAxisInfo)
@@ -62,7 +62,7 @@ socket.on('consumption', (data: number) => {
     conLog.push(data)
     conLog.shift()
     cView.innerText = String(data)
-    drawGraph(cCtx, conLog, -100, 100)
+    drawGraph(cCtx, conLog, -4, 4, { color: '#00FF00', coor: 0 } as Line)
 })
 
 drawAxis(gCtx, gAxisInfo)
@@ -71,5 +71,5 @@ socket.on('generation', (data: number) => {
     genLog.push(data)
     genLog.shift()
     gView.innerText = String(data)
-    drawGraph(gCtx, genLog, 0, 1000)
+    drawGraph(gCtx, genLog, 0, 1.2)
 })
