@@ -26,24 +26,41 @@ io.on('connection', function (socket) {
         console.log('Client Disconnected');
     });
     console.log('Client Connected');
-    var emitLog = function () {
-        var genRandom = function (min, max) {
-            var raw = Math.random();
-            var range = max - min;
-            var rounded = Math.round(raw * range * 1000) / 1000;
-            return min + rounded;
-        };
-        socket.emit(EVENT_NAMES.vlt, genRandom(80, 120));
-        socket.emit(EVENT_NAMES.spd, genRandom(0, 150));
-        socket.emit(EVENT_NAMES.tmp, genRandom(20, 120));
-        socket.emit(EVENT_NAMES.gen, genRandom(0, 1.2));
-        socket.emit(EVENT_NAMES.con, genRandom(-4, 4));
-        setTimeout(emitLog, 1000);
-    };
-    emitLog();
     var pyShell = new python_shell_1.PythonShell(path_1.default.resolve(__dirname, '../python/request-log.py'));
     pyShell.on('message', function (message) {
-        console.log(message);
+        // [<vlt>, <spd>, <tmp>, <con>, <gen>]
+        var json = "{ log: " + message + " }";
+        var logObj = JSON.parse(json);
+        var log = logObj['log'];
+        var vlt = log[0];
+        var spd = log[1];
+        var tmp = log[2];
+        var con = log[3];
+        var gen = log[4];
+        socket.emit(EVENT_NAMES.vlt, vlt);
+        socket.emit(EVENT_NAMES.spd, spd);
+        socket.emit(EVENT_NAMES.tmp, tmp);
+        socket.emit(EVENT_NAMES.con, con);
+        socket.emit(EVENT_NAMES.gen, gen);
     });
+    // const emitLog = () => {
+    //     const genRandom = (min: number, max: number) => {
+    //         const raw = Math.random()
+    //         const range = max - min
+    //         const rounded = Math.round(raw * range * 1000) / 1000
+    //         return min + rounded
+    //     }
+    //     socket.emit(EVENT_NAMES.vlt, genRandom(80, 120))
+    //     socket.emit(EVENT_NAMES.spd, genRandom(0, 150))
+    //     socket.emit(EVENT_NAMES.tmp, genRandom(20, 120))
+    //     socket.emit(EVENT_NAMES.gen, genRandom(0, 1.2))
+    //     socket.emit(EVENT_NAMES.con, genRandom(-4, 4))
+    //     setTimeout(emitLog, 1000)
+    // }
+    // emitLog()
+    // const pyShell = new PythonShell(path.resolve(__dirname, '../python/request-log.py'))
+    // pyShell.on('message', message => {
+    //     console.log(message)
+    // })
 });
 //# sourceMappingURL=main.js.map
