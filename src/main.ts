@@ -31,6 +31,7 @@ io.on('connection', socket => {
     const pyShell = new PythonShell(path.resolve(__dirname, '../python/request-log.py'))
     pyShell.on('message', message => {
         // [<vlt>, <spd>, <tmp>, <con>, <gen>]
+        console.log(`message received: ${ message }`)
         const json = `{ log: ${ message } }`
         const logObj = JSON.parse(json)
         const log = logObj['log']
