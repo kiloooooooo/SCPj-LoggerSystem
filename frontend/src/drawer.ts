@@ -27,13 +27,15 @@ export const drawGraph = (ctx: CanvasRenderingContext2D, data: number[], min: nu
         additionalLine.coor = 300 - unit * (additionalLine.coor - min)
 
         ctx.strokeStyle = additionalLine.color
+        ctx.lineWidth = 2
         ctx.beginPath()
         ctx.moveTo(0, additionalLine.coor)
         ctx.lineTo(360, additionalLine.coor)
         ctx.stroke()
     }
     
-    ctx.strokeStyle = '#000000'
+    ctx.strokeStyle = '#2979FF'
+    ctx.lineWidth = 2
     ctx.beginPath()
     ctx.moveTo(0, data[0])
     for (let i = 0; i < logStack; i++) {

@@ -34,7 +34,7 @@ const vltLog: number[] = new Array(LOG_STACK)
 socket.on('voltage', (data: number) => {
     vltLog.push(data)
     vltLog.shift()
-    vView.innerText = String(data)
+    vView.innerText = `${ data } V`
     drawGraph(vCtx, vltLog, 80, 120, { color: '#FF0000', coor: 100 } as Line)
 })
 
@@ -43,7 +43,7 @@ const spdLog: number[] = new Array(LOG_STACK)
 socket.on('speed', (data: number) => {
     spdLog.push(data)
     spdLog.shift()
-    sView.innerText = String(data)
+    sView.innerText = `${ data } km/h`
     drawGraph(sCtx, spdLog, 0, 150, { color: '#FF0000', coor: 80 } as Line)
 })
 
@@ -52,7 +52,7 @@ const tmpLog: number[] = new Array(LOG_STACK)
 socket.on('temperature', (data: number) => {
     tmpLog.push(data)
     tmpLog.shift()
-    tView.innerText = String(data)
+    tView.innerText = `${ data } ℃`
     drawGraph(tCtx, tmpLog, 20, 120, { color: '#FF0000', coor: 80 } as Line)
 })
 
@@ -61,7 +61,7 @@ const conLog: number[] = new Array(LOG_STACK)
 socket.on('consumption', (data: number) => {
     conLog.push(data)
     conLog.shift()
-    cView.innerText = String(data)
+    cView.innerText = `${ data } kW`
     drawGraph(cCtx, conLog, -4, 4, { color: '#00FF00', coor: 0 } as Line)
 })
 
@@ -70,6 +70,6 @@ const genLog: number[] = new Array(LOG_STACK)
 socket.on('generation', (data: number) => {
     genLog.push(data)
     genLog.shift()
-    gView.innerText = String(data)
+    gView.innerText = `${ data } kW`
     drawGraph(gCtx, genLog, 0, 1.2)
 })

@@ -1,16 +1,31 @@
+body {
+    margin: 0;
+}
+
 #canvases {
     display: flex;
     flex-wrap: wrap;
 }
 
+.card_title {
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.current-value {
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
 .logView {
-    border: 1px solid black;
+    /* border: 1px solid black; */
     margin: 8px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
 }
 
-.bottom-label {
+/* .bottom-label {
     margin-left: 8px;
     margin-right: 8px;
-}
+} */

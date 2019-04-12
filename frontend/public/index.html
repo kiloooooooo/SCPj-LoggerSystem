@@ -4,57 +4,61 @@
         <title>SCPj Logger</title>
         <meta charset="utf-8">
         <link rel="stylesheet" href="styles.css">
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+        <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+        <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
     </head>
     <body>
-        <h1>Solar Car Proj. Logger System</h1>
-        <div id="canvases">
-            <div class="logView">
+        <header class="mdc-top-app-bar mdc-top-app-bar--dense">
+            <div class="mdc-top-app-bar__row">
+                <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                    <span class="mdc-top-app-bar__title">Solar Car Proj. Logger System</span>
+                </section>
+            </div>
+        </header>
+        <div class="mdc-top-app-bar--fixed-adjust" id="canvases">
+            <div class="logView mdc-card mdc-card--outlined">
                 <canvas id="canvas-voltage" height="300" width="400"></canvas>
                 <div class="bottom-label">
-                    <span id="label-vlt">VOLTAGE [V]</span>
+                    <h2 class="card_title mdc-typography mdc-typography--headline6" id="label-vlt">VOLTAGE [V]</h2>
                     <div class="value">
-                        <span id="vlt-value"></span>
-                        <span> V</span>
+                        <h3 class="current-value mdc-typography mdc-typography--body2" id="vlt-value"></h3>
                     </div>
                 </div>
             </div>
-            <div class="logView">
+            <div class="logView mdc-card mdc-card--outlined">
                 <canvas id="canvas-speed" height="300" width="400"></canvas>
                 <div class="bottom-label">
-                    <span id="label-spd">SPEED [km/h]</span>
+                    <h2 class="card_title mdc-typography mdc-typography--headline6" id="label-spd">SPEED [km/h]</h2>
                     <div class="value">
-                        <span id="spd-value"></span>
-                        <span> km/h</span>
+                        <h3 class="current-value mdc-typography mdc-typography--body2" id="spd-value"></h3>
                     </div>
                 </div>
             </div>
-            <div class="logView">
+            <div class="logView mdc-card mdc-card--outlined">
                 <canvas id="canvas-temperature" height="300" width="400"></canvas>
                 <div class="bottom-label">
-                    <span id="label-tmp">INV. TEMPERATURE [℃]</span>
+                    <h2 class="card_title mdc-typography mdc-typography--headline6" id="label-tmp">INV. TEMPERATURE [℃]</h2>
                     <div class="value">
-                        <span id="tmp-value"></span>
-                        <span> ℃</span>
+                        <h3 class="current-value mdc-typography mdc-typography--body2" id="tmp-value"></h3>
                     </div>
                 </div>
             </div>
-            <div class="logView">
+            <div class="logView mdc-card mdc-card--outlined">
                 <canvas id="canvas-consumption" height="300" width="400"></canvas>
                 <div class="bottom-label">
-                    <span id="label-con">EL. CONSUMPTION [kW]</span>
+                    <h2 class="card_title mdc-typography mdc-typography--headline6" id="label-con">EL. CONSUMPTION [kW]</h2>
                     <div class="value">
-                        <span id="con-value"></span>
-                        <span> kW</span>
+                        <h3 class="current-value mdc-typography mdc-typography--body2" id="con-value"></h3>
                     </div>
                 </div>
             </div>
-            <div class="logView">
+            <div class="logView mdc-card mdc-card--outlined">
                 <canvas id="canvas-generation" height="300" width="400"></canvas>
                 <div class="bottom-label">
-                    <span id="label-gen">EL. GENERATION [kW]</span>
+                    <h2 class="card_title mdc-typography mdc-typography--headline6" id="label-gen">EL. GENERATION [kW]</h2>
                     <div class="value">
-                        <span id="gen-value"></span>
-                        <span> kW</span>
+                        <h3 class="current-value mdc-typography mdc-typography--body2" id="gen-value"></h3>
                     </div>
                 </div>
             </div>
