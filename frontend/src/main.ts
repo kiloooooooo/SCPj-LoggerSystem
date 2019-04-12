@@ -13,6 +13,9 @@ const LOG_STACK = 20
 const socketUrl = location.origin
 const socket = io(socketUrl)
 
+const btnShutdown = document.getElementById('btn-shutdown')!!
+const statusMsg = document.getElementById('status-message')!!
+
 const vCanvas = <HTMLCanvasElement> document.getElementById('canvas-voltage')!!
 const vCtx = vCanvas.getContext('2d')!!
 const vView = document.getElementById('vlt-value')!!
@@ -28,6 +31,11 @@ const cView = document.getElementById('con-value')!!
 const gCanvas = <HTMLCanvasElement> document.getElementById('canvas-generation')!!
 const gCtx = gCanvas.getContext('2d')!!
 const gView = document.getElementById('gen-value')!!
+
+btnShutdown.onclick = (ev: MouseEvent) => {
+    socket.emit('command', 'SHUTDOWN')
+    statusMsg.innerText = 'Shut down'
+}
 
 drawAxis(vCtx, vAxisInfo)
 const vltLog: number[] = new Array(LOG_STACK)

@@ -22,53 +22,68 @@ const srv = app.listen(3000, () => {
 
 const io = SocketServer.listen(srv)
 io.on('connection', socket => {
+    let command = 'SEND'
+    let doContinue = true
+
     socket.on('disconnect', () => {
         console.log('Client Disconnected')
     })
 
-    console.log('Client Connected')
-
-    const pyShell = new PythonShell(path.resolve(__dirname, '../python/request-log.py'))
-    pyShell.on('message', message => {
-        // [<vlt>, <spd>, <tmp>, <con>, <gen>]
-        console.log(`message received: ${ message }`)
-        const json = `{ log: ${ message } }`
-        const logObj = JSON.parse(json)
-        const log = logObj['log']
-        const vlt = log[0]
-        const spd = log[1]
-        const tmp = log[2]
-        const con = log[3]
-        const gen = log[4]
-
-        socket.emit(EVENT_NAMES.vlt, vlt)
-        socket.emit(EVENT_NAMES.spd, spd)
-        socket.emit(EVENT_NAMES.tmp, tmp)
-        socket.emit(EVENT_NAMES.con, con)
-        socket.emit(EVENT_NAMES.gen, gen)
+    socket.on('command', (message: any) => {
+        command = message
     })
 
-    // const emitLog = () => {
-    //     const genRandom = (min: number, max: number) => {
-    //         const raw = Math.random()
-    //         const range = max - min
-    //         const rounded = Math.round(raw * range * 1000) / 1000
-    //         return min + rounded
-    //     }
+    console.log('Client Connected')
 
-    //     socket.emit(EVENT_NAMES.vlt, genRandom(80, 120))
-    //     socket.emit(EVENT_NAMES.spd, genRandom(0, 150))
-    //     socket.emit(EVENT_NAMES.tmp, genRandom(20, 120))
-    //     socket.emit(EVENT_NAMES.gen, genRandom(0, 1.2))
-    //     socket.emit(EVENT_NAMES.con, genRandom(-4, 4))
+    const pyPath = path.resolve(__dirname, '../python/request-log.py')
+    const pyShell = new PythonShell(pyPath)
+    const requestLog = () => {
+        pyShell.send(command)
 
-    //     setTimeout(emitLog, 1000)
-    // }
+        if (doContinue)
+            setTimeout(requestLog, 1000);
+    }
 
-    // emitLog()
+    pyShell.on('message', message => {
+        /*
+         * `message` must be like:
+         *   {
+         *     status: number,
+         *     data: string (if status == (202 | 400)) | number[] (if status == 200)
+         *   }
+        */
+        const msgObj = JSON.parse(message)
+        const status = msgObj.status
 
-    // const pyShell = new PythonShell(path.resolve(__dirname, '../python/request-log.py'))
-    // pyShell.on('message', message => {
-    //     console.log(message)
-    // })
+        switch (status) {
+            case 200:
+                const data = msgObj.data
+                const vlt = data[0]
+                const spd = data[1]
+                const tmp = data[2]
+                const con = data[3]
+                const gen = data[4]
+
+                socket.emit(EVENT_NAMES.vlt, vlt)
+                socket.emit(EVENT_NAMES.spd, spd)
+                socket.emit(EVENT_NAMES.tmp, tmp)
+                socket.emit(EVENT_NAMES.con, con)
+                socket.emit(EVENT_NAMES.gen, gen)
+                break
+
+            case 202:
+                console.log(msgObj.data)
+                doContinue = false
+                break
+
+            case 400:
+                console.error(msgObj.data)
+                console.log('Quit.')
+                doContinue = false
+                break
+        }
+
+    })
+
+    requestLog()
 })
