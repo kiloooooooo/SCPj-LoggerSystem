@@ -56,7 +56,11 @@ io.on('connection', function (socket) {
             socket.emit(EVENT_NAMES.gen, gen);
         }
         else {
-            socket.emit(EVENT_NAMES.err, msgObj.data);
+            try {
+            }
+            catch (e) {
+                socket.emit(EVENT_NAMES.err, msgObj.data);
+            }
         }
     });
     requestLog();

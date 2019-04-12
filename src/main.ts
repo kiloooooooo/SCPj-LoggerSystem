@@ -30,6 +30,7 @@ io.on('connection', socket => {
     console.log(`Client Connected:\n\tid = ${ socket.id }`)
 
     const pyPath = path.resolve(__dirname, '../python/request-log.py')
+
     const pyShell = new PythonShell(pyPath)
     const requestLog = () => {
         pyShell.send('SEND')
@@ -62,7 +63,11 @@ io.on('connection', socket => {
             socket.emit(EVENT_NAMES.gen, gen)
         }
         else {
-            socket.emit(EVENT_NAMES.err, msgObj.data)
+            try {
+            }
+            catch (e) {
+                socket.emit(EVENT_NAMES.err, msgObj.data)
+            }
         }
     })
 
