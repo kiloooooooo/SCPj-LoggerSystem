@@ -73,3 +73,7 @@ socket.on('generation', (data: number) => {
     gView.innerText = `${ data } kW`
     drawGraph(gCtx, genLog, 0, 1.2)
 })
+
+socket.on('error', (message: string) => {
+    console.error(message)
+})

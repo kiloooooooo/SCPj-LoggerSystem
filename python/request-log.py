@@ -1,6 +1,7 @@
 import smbus
 import time
 import csv
+import json
 from pathlib import Path
 
 
@@ -19,6 +20,17 @@ def dumplog(data: list):
 
 while True:
     input() # |> ignore
-    log = bus.read_i2c_block_data(SLAVE_ADDRESS, 0, 5)
-    dumplog(log)
-    print(log)
+    try:
+        log = bus.read_i2c_block_data(SLAVE_ADDRESS, 0, 5)
+        dumplog(log)
+        data = {
+            'status': 200,
+            'data': log
+        }
+        print(json.dumps(data))
+    except OSError as e:
+        data = {
+            'status': 500,
+            'data': 'ERROR OCCURED!\n' + str(e)
+        }
+        print(json.dumps(data))

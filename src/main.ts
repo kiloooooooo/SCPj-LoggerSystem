@@ -9,7 +9,8 @@ const EVENT_NAMES = {
     spd: 'speed',
     tmp: 'temperature',
     con: 'consumption',
-    gen: 'generation'
+    gen: 'generation',
+    err: 'error'
 }
 
 const app = new Koa()
@@ -40,23 +41,29 @@ io.on('connection', socket => {
         /*
          * `message` must be like:
          *   {
-         *     data: number[]
+         *     status: number (200 | 500)
+         *     data: number[] (if status == 200) | string (if status == 500)
          *   }
          */
-        const msgObj = JSON.parse(`{ \"data\": ${ message } }`)
+        const msgObj = JSON.parse(message)
 
-        const data = msgObj.data
-        const vlt = data[0]
-        const spd = data[1]
-        const tmp = data[2]
-        const con = data[3]
-        const gen = data[4]
+        if (msgObj.status === 200) {
+            const data = msgObj.data
+            const vlt = data[0]
+            const spd = data[1]
+            const tmp = data[2]
+            const con = data[3]
+            const gen = data[4]
 
-        socket.emit(EVENT_NAMES.vlt, vlt)
-        socket.emit(EVENT_NAMES.spd, spd)
-        socket.emit(EVENT_NAMES.tmp, tmp)
-        socket.emit(EVENT_NAMES.con, con)
-        socket.emit(EVENT_NAMES.gen, gen)
+            socket.emit(EVENT_NAMES.vlt, vlt)
+            socket.emit(EVENT_NAMES.spd, spd)
+            socket.emit(EVENT_NAMES.tmp, tmp)
+            socket.emit(EVENT_NAMES.con, con)
+            socket.emit(EVENT_NAMES.gen, gen)
+        }
+        else {
+            socket.emit(EVENT_NAMES.err, msgObj.data)
+        }
     })
 
     requestLog()
