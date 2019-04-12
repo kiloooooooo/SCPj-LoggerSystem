@@ -1,28 +1,25 @@
 import json
+import random
+
+def genRandom(mininum, maximum):
+    val_range = maximum - mininum
+    rand = random.random() * val_range
+    return rand + mininum
+
 
 while True:
-    command = input().upper()
+    input() # |> ignore
 
-    if command == 'SEND':
-        # Dummy Data
-        message = {
-            'status': 200,
-            'data': [12, 24, 36, 48, 60]
-        }
-        print(json.dumps(message))
-
-    elif command == 'SHUTDOWN':
-        message = {
-            'status': 202,
-            'data': 'Shutting down...'
-        }
-        print(json.dumps(message))
-
-    else:
-        message = {
-            'status': 400,
-            'data': 'Error: Unknown command: ' + command
-        }
-        print(json.dumps(message))
+    # Dummy Data
+    message = {
+        'data': [
+            genRandom(80, 120),
+            genRandom(0, 150),
+            genRandom(20, 120),
+            genRandom(-4, 4),
+            genRandom(0, 1.2)
+        ]
+    }
+    print(json.dumps(message))
 
 print('Shut down.')

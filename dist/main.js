@@ -18,60 +18,39 @@ var EVENT_NAMES = {
 var app = new koa_1.default();
 app.use(koa_static_1.default(path_1.default.resolve(__dirname, '../frontend/public/')));
 var srv = app.listen(3000, function () {
-    console.log('Server.running on port 3000');
+    console.log('Server running on port 3000');
 });
 var io = socket_io_1.default.listen(srv);
 io.on('connection', function (socket) {
-    var command = 'SEND';
-    var doContinue = true;
     socket.on('disconnect', function () {
-        console.log('Client Disconnected');
+        console.log("Client Disconnected:\n\tid = " + socket.id);
     });
-    socket.on('command', function (message) {
-        command = message;
-    });
-    console.log('Client Connected');
+    console.log("Client Connected:\n\tid = " + socket.id);
     var pyPath = path_1.default.resolve(__dirname, '../python/request-log.py');
     var pyShell = new python_shell_1.PythonShell(pyPath);
     var requestLog = function () {
-        pyShell.send(command);
-        if (doContinue)
-            setTimeout(requestLog, 1000);
+        pyShell.send('SEND');
+        setTimeout(requestLog, 1000);
     };
     pyShell.on('message', function (message) {
         /*
          * `message` must be like:
          *   {
-         *     status: number,
-         *     data: string (if status == (202 | 400)) | number[] (if status == 200)
+         *     data: number[]
          *   }
         */
         var msgObj = JSON.parse(message);
-        var status = msgObj.status;
-        switch (status) {
-            case 200:
-                var data = msgObj.data;
-                var vlt = data[0];
-                var spd = data[1];
-                var tmp = data[2];
-                var con = data[3];
-                var gen = data[4];
-                socket.emit(EVENT_NAMES.vlt, vlt);
-                socket.emit(EVENT_NAMES.spd, spd);
-                socket.emit(EVENT_NAMES.tmp, tmp);
-                socket.emit(EVENT_NAMES.con, con);
-                socket.emit(EVENT_NAMES.gen, gen);
-                break;
-            case 202:
-                console.log(msgObj.data);
-                doContinue = false;
-                break;
-            case 400:
-                console.log(msgObj.data);
-                console.log('Quit.');
-                doContinue = false;
-                break;
-        }
+        var data = msgObj.data;
+        var vlt = data[0];
+        var spd = data[1];
+        var tmp = data[2];
+        var con = data[3];
+        var gen = data[4];
+        socket.emit(EVENT_NAMES.vlt, vlt);
+        socket.emit(EVENT_NAMES.spd, spd);
+        socket.emit(EVENT_NAMES.tmp, tmp);
+        socket.emit(EVENT_NAMES.con, con);
+        socket.emit(EVENT_NAMES.gen, gen);
     });
     requestLog();
 });

@@ -3,16 +3,6 @@
     flex-wrap: wrap;
 }
 
-.control-panel {
-    display: flex;
-    align-items: center;
-    justify-content: left;
-}
-
-.control-panel > span {
-    margin-left: 8px;
-}
-
 .logView {
     border: 1px solid black;
     margin: 8px;
