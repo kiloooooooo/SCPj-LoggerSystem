@@ -11,13 +11,6 @@ import time
 from pathlib import Path
 
 
-# def init_log(headers):
-#     targetpath = Path('./logdumps/dump.csv')
-#     with open(targetpath, 'a', newline='') as f:
-#         writer = csv.writer(f)
-#         writer.writerow(headers)
-
-
 def dump_log(data: list):
     targetpath = Path('./logdumps/dump.csv')
     current = time.asctime()
@@ -31,8 +24,6 @@ def gen_random(mininum, maximum):
     rand = random.random() * val_range
     return rand + mininum
 
-
-# init_log(['time', 'voltage', 'speed', 'temperature', 'consumption', 'generation'])
 
 while True:
     input() # |> ignore
