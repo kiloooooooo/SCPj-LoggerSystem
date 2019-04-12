@@ -39,7 +39,7 @@ io.on('connection', function (socket) {
          *     data: number[]
          *   }
          */
-        var msgObj = JSON.parse(message);
+        var msgObj = JSON.parse("{ \"data\": " + message + " }");
         var data = msgObj.data;
         var vlt = data[0];
         var spd = data[1];

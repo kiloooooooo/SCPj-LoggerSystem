@@ -43,7 +43,7 @@ io.on('connection', socket => {
          *     data: number[]
          *   }
          */
-        const msgObj = JSON.parse(message)
+        const msgObj = JSON.parse(`{ \"data\": ${ message } }`)
 
         const data = msgObj.data
         const vlt = data[0]
