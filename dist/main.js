@@ -44,11 +44,11 @@ io.on('connection', function (socket) {
         var msgObj = JSON.parse(message);
         if (msgObj.status === 200) {
             var data = msgObj.data;
-            var vlt = data[0];
-            var spd = data[1];
-            var tmp = data[2];
-            var con = data[3];
-            var gen = data[4];
+            var vlt = data.vlt;
+            var spd = data.spd;
+            var tmp = data.tmp;
+            var con = data.con;
+            var gen = data.gen;
             socket.emit(EVENT_NAMES.vlt, vlt);
             socket.emit(EVENT_NAMES.spd, spd);
             socket.emit(EVENT_NAMES.tmp, tmp);
