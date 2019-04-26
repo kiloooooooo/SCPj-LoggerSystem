@@ -43,7 +43,7 @@ io.on('connection', socket => {
          * `message` must be like:
          *   {
          *     status: number (200 | 500)
-         *     data: number[] (if status == 200) | string (if status == 500)
+         *     data: object (if status == 200) | string (if status == 500)
          *   }
          */
         const msgObj = JSON.parse(message)
@@ -55,12 +55,6 @@ io.on('connection', socket => {
             const tmp = data.tmp
             const con = data.con
             const gen = data.gen
-
-            console.log(data.vlt)
-            console.log(data.spd)
-            console.log(data.tmp)
-            console.log(data.con)
-            console.log(data.gen)
 
             socket.emit(EVENT_NAMES.vlt, vlt)
             socket.emit(EVENT_NAMES.spd, spd)
