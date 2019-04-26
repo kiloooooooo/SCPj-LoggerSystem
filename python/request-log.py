@@ -33,7 +33,7 @@ while True:
         con = shift(log[9], log[10], log[11])
         gen = shift(log[12], log[13], log[14])
 
-        dumplog(log)
+        # dumplog(log)
         data = {
             'status': 200,
             'data': {
