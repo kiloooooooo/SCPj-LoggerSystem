@@ -50,11 +50,11 @@ io.on('connection', socket => {
 
         if (msgObj.status === 200) {
             const data = msgObj.data
-            const vlt = data[0]
-            const spd = data[1]
-            const tmp = data[2]
-            const con = data[3]
-            const gen = data[4]
+            const vlt = data.vlt
+            const spd = data.spd
+            const tmp = data.tmp
+            const con = data.con
+            const gen = data.gen
 
             socket.emit(EVENT_NAMES.vlt, vlt)
             socket.emit(EVENT_NAMES.spd, spd)

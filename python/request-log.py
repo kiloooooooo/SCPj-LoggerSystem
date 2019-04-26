@@ -18,14 +18,31 @@ def dumplog(data: list):
         writer.writerow([current] + data)
 
 
+def shift(zero, one, two):
+    return (two << 16) + (one << 8) + zero
+
+
 while True:
     input() # |> ignore
     try:
-        log = bus.read_i2c_block_data(SLAVE_ADDRESS, 0, 5)
+        log = bus.read_i2c_block_data(SLAVE_ADDRESS, 0, 15)
+        
+        vlt = shift(log[0], log[1], log[2])
+        spd = shift(log[3], log[4], log[5])
+        tmp = shift(log[6], log[7], log[8])
+        con = shift(log[9], log[10], log[11])
+        gen = shift(log[12], log[13], log[14])
+
         dumplog(log)
         data = {
             'status': 200,
-            'data': log
+            'data': {
+                'vlt': vlt,
+                'spd': spd,
+                'tmp': tmp,
+                'con': con,
+                'gen': gen
+            }
         }
         print(json.dumps(data))
     except OSError as e:
