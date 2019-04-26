@@ -49,6 +49,11 @@ io.on('connection', function (socket) {
             var tmp = data.tmp;
             var con = data.con;
             var gen = data.gen;
+            console.log(data.vlt);
+            console.log(data.spd);
+            console.log(data.tmp);
+            console.log(data.con);
+            console.log(data.gen);
             socket.emit(EVENT_NAMES.vlt, vlt);
             socket.emit(EVENT_NAMES.spd, spd);
             socket.emit(EVENT_NAMES.tmp, tmp);
