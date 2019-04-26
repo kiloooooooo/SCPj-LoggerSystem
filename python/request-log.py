@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 
-SLAVE_ADDRESS = 0x04
+SLAVE_ADDRESS = 0x08
 
 bus = smbus.SMBus(1)
 
