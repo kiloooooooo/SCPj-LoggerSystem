@@ -4,17 +4,18 @@ import SocketServer from 'socket.io'
 import path from 'path'
 import { PythonShell } from 'python-shell'
 
+const LOG_INTERVAL = 1000  // [ms]
+const RACE_TIME = 5 * 3600  // [s]
+const BATTERY_CAPACITY = 3600 * 3600 / 1000  // [kWs]
 const EVENT_NAMES = {
-    vlt: 'voltage',
-    spd: 'speed',
-    tmp: 'temperature',
-    con: 'consumption',
-    gen: 'generation',
+    alljson: 'alljson',
     err: 'error'
 }
 
-const app = new Koa()
+const convToSpeed = (kiloWatt: number) =>
+    Math.sqrt(20 * 1000 * kiloWatt) / 3
 
+const app = new Koa()
 app.use(serve(path.resolve(__dirname, '../frontend/public/')))
 
 const srv = app.listen(3000, () => {
@@ -23,20 +24,21 @@ const srv = app.listen(3000, () => {
 
 const io = SocketServer.listen(srv)
 io.on('connection', socket => {
+    console.log(`Client Connected:\n\tid = ${ socket.id }`)
+    
     socket.on('disconnect', () => {
         console.log(`Client Disconnected:\n\tid = ${ socket.id }`)
     })
-
-    console.log(`Client Connected:\n\tid = ${ socket.id }`)
-
+    
     const pyPath = path.resolve(__dirname, '../python/request-log.py')
-
     const pyShell = new PythonShell(pyPath)
     const requestLog = () => {
         pyShell.send('SEND')
-
-        setTimeout(requestLog, 1000);
+        setTimeout(requestLog, LOG_INTERVAL);
     }
+    
+    let timeRemaining = RACE_TIME
+    let battRemaining = BATTERY_CAPACITY
 
     pyShell.on('message', message => {
         /*
@@ -48,19 +50,37 @@ io.on('connection', socket => {
          */
         const msgObj = JSON.parse(message)
 
-        if (msgObj.status === 200) {
-            const data = msgObj.data
-            const vlt = data.vlt
-            const spd = data.spd
-            const tmp = data.tmp
-            const con = data.con
-            const gen = data.gen
+        const data = msgObj.data
+        const vlt = data.vlt
+        const spd = data.spd
+        const tmp = data.tmp
+        const con = data.con
+        const gen = data.gen
 
-            socket.emit(EVENT_NAMES.vlt, vlt)
-            socket.emit(EVENT_NAMES.spd, spd)
-            socket.emit(EVENT_NAMES.tmp, tmp)
-            socket.emit(EVENT_NAMES.con, con)
-            socket.emit(EVENT_NAMES.gen, gen)
+        let toConsume = 0
+        let suggSpeed = 0
+
+        if (msgObj.status === 200) {
+            if (0 < timeRemaining) {
+                timeRemaining -= 50
+
+                battRemaining = Math.min(battRemaining - con + gen, BATTERY_CAPACITY)
+                toConsume = battRemaining / timeRemaining
+                suggSpeed = convToSpeed(toConsume)
+            }
+
+            const logData = {
+                voltage: vlt,
+                speed: spd,
+                temperature: tmp,
+                consumption: con,
+                generation: gen,
+                toConsume: toConsume,
+                suggSpeed: suggSpeed,
+                battRemaining: battRemaining
+            }
+
+            socket.emit(EVENT_NAMES.alljson, JSON.stringify(logData))
         }
         else {
             try {
