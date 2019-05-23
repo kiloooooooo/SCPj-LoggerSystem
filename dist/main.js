@@ -7,10 +7,13 @@ var koa_1 = __importDefault(require("koa"));
 var koa_static_1 = __importDefault(require("koa-static"));
 var socket_io_1 = __importDefault(require("socket.io"));
 var path_1 = __importDefault(require("path"));
+var fs_1 = __importDefault(require("fs"));
+var moment_1 = __importDefault(require("moment"));
 var python_shell_1 = require("python-shell");
+var LOG_TIME_FORMAT = 'YY/MM/DD HH:mm:ss';
 var LOG_INTERVAL = 1000; // [ms]
-var RACE_TIME = 5 * 3600; // [s]
-var BATTERY_CAPACITY = 3600 * 3600 / 1000; // [kWs]
+var RACE_TIME = 18000; // 5 * 3600 [s]
+var BATTERY_CAPACITY = 12960; // = 3600 * 3600 / 1000 [kWs]
 var EVENT_NAMES = {
     alljson: 'alljson',
     err: 'error'
@@ -46,15 +49,15 @@ io.on('connection', function (socket) {
          *   }
          */
         var msgObj = JSON.parse(message);
-        var data = msgObj.data;
-        var vlt = data.vlt;
-        var spd = data.spd;
-        var tmp = data.tmp;
-        var con = data.con;
-        var gen = data.gen;
-        var toConsume = 0;
-        var suggSpeed = 0;
         if (msgObj.status === 200) {
+            var data = msgObj.data;
+            var vlt = data.vlt;
+            var spd = data.spd;
+            var tmp = data.tmp;
+            var con = data.con;
+            var gen = data.gen;
+            var toConsume = 0;
+            var suggSpeed = 0;
             if (0 < timeRemaining) {
                 timeRemaining -= 50;
                 battRemaining = Math.min(battRemaining - con + gen, BATTERY_CAPACITY);
@@ -72,8 +75,12 @@ io.on('connection', function (socket) {
                 battRemaining: battRemaining
             };
             socket.emit(EVENT_NAMES.alljson, JSON.stringify(logData));
+            var time = moment_1.default().format(LOG_TIME_FORMAT);
+            var line = time + "," + vlt + "," + spd + "," + tmp + "," + con + "," + gen + "," + toConsume + "," + suggSpeed + "," + battRemaining + "\n";
+            fs_1.default.appendFileSync('logdumps/dump.csv', line);
         }
         else {
+            // Error while running `request-log.py`
             try {
             }
             catch (e) {

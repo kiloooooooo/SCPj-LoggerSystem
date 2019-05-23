@@ -1,12 +1,12 @@
 import io from 'socket.io-client'
-import { Line, drawAxis, drawGraph, drawBattState } from './drawer.ts'
+import { Line, drawAxis, drawGraph, drawBattState } from './drawer'
 import {
     vAxisInfo,
     sAxisInfo,
     tAxisInfo,
     cAxisInfo,
     gAxisInfo
-} from './axis-info.ts'
+} from './axis-info'
 
 type LogData = {
     voltage: number,
@@ -20,7 +20,9 @@ type LogData = {
 }
 
 const LOG_STACK = 20
-const BATTERY_CAPACITY = 12960
+const BATTERY_CAPACITY = 12960  // = 3600 * 3600 / 1000 [kWs]
+const GRAPH_COLOR_PRIMARY = '#2979FF'
+const GRAPH_COLOR_SECONDARY = '#747474'
 
 const socketUrl = location.origin
 const socket = io(socketUrl)
@@ -72,7 +74,8 @@ socket.on('alljson', (json: string) => {
     voltageLog.push(voltage)
     voltageLog.shift()
     vView.innerText = `${ voltage } V`
-    drawGraph(vCtx, voltageLog, '#2979FF', 80, 120, true, [{ color: '#FF0000', coor: 100 } as Line])
+    drawGraph(vCtx, voltageLog, GRAPH_COLOR_PRIMARY,
+              80, 120, true, [{ color: '#FF0000', value: 100 } as Line])
 
     // Speed
     speedLog.push(speed)
@@ -80,15 +83,16 @@ socket.on('alljson', (json: string) => {
     suggSpeedLog.push(suggSpeed)
     suggSpeedLog.shift()
     sView.innerText = `${ speed } km/h`
-    
-    drawGraph(sCtx, speedLog, '#2979FF', 0, 150, true, [{ color: '#FF0000', coor: 80 } as Line])
-    drawGraph(sCtx, suggSpeedLog, '#747474', 0, 150, false)
+    drawGraph(sCtx, speedLog, GRAPH_COLOR_PRIMARY,
+              0, 150, true, [{ color: '#FF0000', value: 80 } as Line])
+    drawGraph(sCtx, suggSpeedLog, GRAPH_COLOR_SECONDARY, 0, 150, false)
 
     // Inverter Temperature
     temperatureLog.push(temperature)
     temperatureLog.shift()
     tView.innerText = `${ temperature } ℃`
-    drawGraph(tCtx, temperatureLog, '#2979FF', 20, 120, true, [{ color: '#FF0000', coor: 80 } as Line])
+    drawGraph(tCtx, temperatureLog, GRAPH_COLOR_PRIMARY,
+              20, 120, true, [{ color: '#FF0000', value: 80 } as Line])
 
     // Electric Consumption
     consumptionLog.push(consumption)
@@ -96,17 +100,18 @@ socket.on('alljson', (json: string) => {
     toConsumeLog.push(toConsume)
     toConsumeLog.shift()
     cView.innerText = `${ consumption } kW`
-    drawGraph(cCtx, consumptionLog, '#2979FF', -4, 4, true, [{ color: '#00FF00', coor: 0 } as Line])
-    drawGraph(cCtx, toConsumeLog, '#747474', -4, 4, false)
+    drawGraph(cCtx, consumptionLog,　GRAPH_COLOR_PRIMARY,
+              -4, 4, true, [{ color: '#00FF00', value: 0 } as Line])
+    drawGraph(cCtx, toConsumeLog, GRAPH_COLOR_SECONDARY, -4, 4, false)
 
     // Electic Generation
     generationLog.push(generation)
     generationLog.shift()
     gView.innerText = `${ generation } kW`
-    drawGraph(gCtx, generationLog, '#2979FF', 0, 1.2, true)
+    drawGraph(gCtx, generationLog, GRAPH_COLOR_PRIMARY, 0, 1.2, true)
 
     // Battery
-    drawBattState(bCtx, battRemaining, '#2979FF', BATTERY_CAPACITY)
+    drawBattState(bCtx, battRemaining, GRAPH_COLOR_PRIMARY, BATTERY_CAPACITY)
 })
 
 socket.on('error', (message: string) => {

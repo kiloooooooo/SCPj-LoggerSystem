@@ -2,11 +2,14 @@ import Koa from 'koa'
 import serve from 'koa-static'
 import SocketServer from 'socket.io'
 import path from 'path'
+import fs from 'fs'
+import moment from 'moment'
 import { PythonShell } from 'python-shell'
 
+const LOG_TIME_FORMAT = 'YY/MM/DD HH:mm:ss'
 const LOG_INTERVAL = 1000  // [ms]
-const RACE_TIME = 5 * 3600  // [s]
-const BATTERY_CAPACITY = 3600 * 3600 / 1000  // [kWs]
+const RACE_TIME = 18000  // 5 * 3600 [s]
+const BATTERY_CAPACITY = 12960  // = 3600 * 3600 / 1000 [kWs]
 const EVENT_NAMES = {
     alljson: 'alljson',
     err: 'error'
@@ -50,17 +53,17 @@ io.on('connection', socket => {
          */
         const msgObj = JSON.parse(message)
 
-        const data = msgObj.data
-        const vlt = data.vlt
-        const spd = data.spd
-        const tmp = data.tmp
-        const con = data.con
-        const gen = data.gen
-
-        let toConsume = 0
-        let suggSpeed = 0
-
         if (msgObj.status === 200) {
+            const data = msgObj.data
+            const vlt = data.vlt
+            const spd = data.spd
+            const tmp = data.tmp
+            const con = data.con
+            const gen = data.gen
+
+            let toConsume = 0
+            let suggSpeed = 0
+
             if (0 < timeRemaining) {
                 timeRemaining -= 50
 
@@ -81,8 +84,13 @@ io.on('connection', socket => {
             }
 
             socket.emit(EVENT_NAMES.alljson, JSON.stringify(logData))
+
+            let time = moment().format(LOG_TIME_FORMAT)
+            let line = `${ time },${ vlt },${ spd },${ tmp },${ con },${ gen },${ toConsume },${ suggSpeed },${ battRemaining }\n`
+            fs.appendFileSync('logdumps/dump.csv', line)
         }
         else {
+            // Error while running `request-log.py`
             try {
             }
             catch (e) {

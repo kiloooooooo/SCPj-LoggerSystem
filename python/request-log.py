@@ -9,15 +9,6 @@
 
 # bus = smbus.SMBus(1)
 
-
-# def dumplog(data: list):
-#     target = Path('./logdumps/dump.csv')
-#     current = time.asctime()
-#     with open(target, 'a', newline='') as f:
-#         writer = csv.writer(f)
-#         writer.writerow([current] + data)
-
-
 # def shift(zero, one, two):
 #     return (two << 16) + (one << 8) + zero
 
@@ -44,7 +35,6 @@
 #                 'gen': gen
 #             }
 #         }
-#         print(json.dumps(data))
 #     except OSError as e:
 #         data = {
 #             'status': 500,
