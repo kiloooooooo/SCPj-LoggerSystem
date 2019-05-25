@@ -1,6 +1,6 @@
 export type AxisInfo = {
     val: number,
-    value: number
+    coor: number
 }
 
 export type Line = {
@@ -10,17 +10,30 @@ export type Line = {
 
 export const drawAxis = (ctx: CanvasRenderingContext2D, data: AxisInfo[]) => {
     for (let datum of data)
-        ctx.fillText(String(datum.val), 375, datum.value)
+        ctx.fillText(String(datum.val), 375, datum.coor)
 }
 
 export const drawGraph =
     (ctx: CanvasRenderingContext2D,
      data: number[],
      color: string,
-     rangeMin: number,
-     rangeMax: number,
+     lowerLimit: number,
+     upperLimit: number,
      doClear: boolean,
-     additionalLines: Line[] = []) => {
+     extraLines: Line[] = []) => {
+
+    /*
+     *                                25
+     *   <-----------375------------><-->
+     *   +------------------------------+  ↑
+     *   |                          |   |  |
+     *   |                          | A |  |
+     *   |        GRAPH AREA        | X |  | 300
+     *   |                          | I |  |
+     *   |                          | S |  |
+     *   |                          |   |  |
+     *   +------------------------------+  ↓
+     */
 
     if (doClear) {
         ctx.clearRect(0, 0, 375, 300)
@@ -28,21 +41,21 @@ export const drawGraph =
 
     const logStack = data.length
     const interval = 375 / logStack
-    const range = rangeMax - rangeMin
+    const range = upperLimit - lowerLimit
     const unit = 300 / range
 
-    for (let additionalLine of additionalLines) {
-        additionalLine.value = 300 - unit * (additionalLine.value - rangeMin)
+    for (let extraLine of extraLines) {
+        let coor = 300 - unit * (extraLine.value - lowerLimit)
 
-        ctx.strokeStyle = additionalLine.color
+        ctx.strokeStyle = extraLine.color
         ctx.lineWidth = 2
         ctx.beginPath()
-        ctx.moveTo(0, additionalLine.value)
-        ctx.lineTo(360, additionalLine.value)
+        ctx.moveTo(0, coor)
+        ctx.lineTo(360, coor)
         ctx.stroke()
     }
 
-    data = data.map((val, idx, arr) => 300 - unit * (val - rangeMin))
+    data = data.map((val, idx, arr) => 300 - unit * (val - lowerLimit))
     ctx.strokeStyle = color
     ctx.lineWidth = 2
     ctx.lineCap = 'round'
