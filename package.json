@@ -17,7 +17,7 @@
     "koa": "^2.7.0",
     "koa-route": "^3.2.0",
     "koa-static": "^5.0.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "python-shell": "^1.0.7",
     "socket.io": "^2.2.0",
     "typescript": "^3.4.3"
